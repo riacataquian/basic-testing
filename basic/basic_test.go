@@ -8,7 +8,7 @@ func TestGreet(t *testing.T) {
 	want := "Hello, john!"
 
 	if got != want {
-		t.Errorf("Greet(%s) = %s, want %s", in, got, want)
+		t.Errorf("Greet(%s) = %q, want %q", in, got, want)
 	}
 }
 
