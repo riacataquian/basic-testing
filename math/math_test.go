@@ -21,10 +21,12 @@ func TestSum(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		got := Sum(test.in...)
+		t.Run(test.desc, func(t *testing.T) {
+			got := Sum(test.in...)
 
-		if got != test.want {
-			t.Errorf("Sum(%v) = %d, want %d", test.in, got, test.want)
-		}
+			if got != test.want {
+				t.Errorf("Sum(%v) = %d, want %d", test.in, got, test.want)
+			}
+		})
 	}
 }
