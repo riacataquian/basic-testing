@@ -34,24 +34,49 @@ func TestPingHandler(t *testing.T) {
 }
 
 func TestHelloHandler(t *testing.T) {
-	req, err := http.NewRequest("GET", "/hello", nil)
-	req.Form = url.Values{"person": {"john"}}
-	if err != nil {
-		t.Fatal(err)
+	tests := []struct {
+		desc       string
+		in         url.Values
+		wantErr    bool
+		wantBody   string
+		wantStatus int
+	}{
+		{
+			desc:       "returns a status OK and the correct body when person params is supplied",
+			in:         url.Values{"person": {"john"}},
+			wantStatus: http.StatusOK,
+			wantBody:   "Hello, john!",
+		},
+		{
+			desc:       "returns a status BadRequest when no query parameter is supplied",
+			wantErr:    true,
+			wantStatus: http.StatusBadRequest,
+		},
 	}
 
-	res := httptest.NewRecorder()
-	handler := http.HandlerFunc(helloHandler)
+	for _, test := range tests {
+		t.Run(test.desc, func(t *testing.T) {
+			req, err := http.NewRequest("GET", "/hello", nil)
+			req.Form = test.in
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	handler.ServeHTTP(res, req)
+			res := httptest.NewRecorder()
+			handler := http.HandlerFunc(helloHandler)
 
-	wantStatus := http.StatusOK
-	if got := res.Code; got != wantStatus {
-		t.Errorf("expecting status: got %v, want %v", got, wantStatus)
-	}
+			handler.ServeHTTP(res, req)
 
-	wantBody := "Hello, john!"
-	if got := res.Body.String(); got != wantBody {
-		t.Errorf("expecting body: got %v, want %v", got, wantBody)
+			if got := res.Code; got != test.wantStatus {
+				t.Errorf("expecting status: got %d, want %d", got, test.wantStatus)
+			}
+
+			got := res.Body.String()
+
+			// Successful HTTP requests.
+			if !test.wantErr && got != test.wantBody {
+				t.Errorf("expecting body: got %q, want %q", got, test.wantBody)
+			}
+		})
 	}
 }

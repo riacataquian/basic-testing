@@ -9,14 +9,14 @@ func TestSum(t *testing.T) {
 		want int
 	}{
 		{
-			desc: "returns the sum of a single int",
-			in:   []int{20},
-			want: 20,
-		},
-		{
-			desc: "returns the sum of the int slices",
+			desc: "returns the sum of ints",
 			in:   []int{1, 2, 3, 4, 5},
 			want: 15,
+		},
+		{
+			desc: "returns the sum of negative ints",
+			in:   []int{1, 2, 3, 4, -5},
+			want: 5,
 		},
 	}
 

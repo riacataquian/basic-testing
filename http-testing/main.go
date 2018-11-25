@@ -20,5 +20,12 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 
 // curl http://localhost:8080/hello?person=john
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, fmt.Sprintf("Hello, %s!", r.FormValue("person")))
+	person := r.FormValue("person")
+
+	if person == "" {
+		http.Error(w, "missing required parameter/s", http.StatusBadRequest)
+		return
+	}
+
+	io.WriteString(w, fmt.Sprintf("Hello, %s!", person))
 }
